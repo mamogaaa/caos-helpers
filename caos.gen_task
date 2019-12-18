@@ -47,6 +47,7 @@ echo "\
 #include <stdio.h>
 
 int main(void) {
+    // INJECT_REPL
     return 0;
 }\
 " > main.c

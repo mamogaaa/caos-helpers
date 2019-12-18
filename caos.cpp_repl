@@ -1,17 +1,50 @@
 #!/bin/bash
-while [ 1 ]; do
-    read -e -p "> " line
-    echo "
+
+mainc="
 #include <iostream>
 using namespace std;
 int main() {
-    cout << \"< \" << ($line) << endl;
+    // INJECT_REPL
     return 0;
 }
-    " > /tmp/caos_repl_code.cpp
-    printf "Compiling... "
+"
+
+if [ ! -z $1 ]; then
+mainc="
+#include <iostream>
+using namespace std;
+$(cat $1)
+"
+fi
+
+while [ 1 ]; do
+    read -e -p "> " line
+    echo "" > /tmp/caos_repl_code.cpp
+    while IFS= read -r cline; do
+        if [ -z "$(echo $cline | grep "// INJECT_REPL")" ]; then
+            echo $cline >> /tmp/caos_repl_code.cpp
+        else
+            if [ -z "$(echo $line | grep ";")" ]; then
+                echo "cout << ($line) << endl;" >> /tmp/caos_repl_code.cpp
+            else
+                echo $line >> /tmp/caos_repl_code.cpp
+            fi
+        fi
+    done <<< "$mainc"
+    echo "Compiling... "
     g++ /tmp/caos_repl_code.cpp -o /tmp/caos_repl
-    echo "[DONE]"
-    chmod +x /tmp/caos_repl
-    /tmp/caos_repl
+    if [ $? -eq 0 ]; then
+        echo "Compiling...[DONE]"
+        chmod +x /tmp/caos_repl
+        if [ -z "$(echo $line | grep ";")" ]; then
+            printf "< "
+            /tmp/caos_repl
+        else
+            echo "#####BEGIN_OUTPUT#####"
+            /tmp/caos_repl
+            echo "######END_OUTPUT######"
+        fi
+    else
+        echo "Compiling...[FAIL]"
+    fi
 done

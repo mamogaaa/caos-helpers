@@ -23,7 +23,7 @@ ofilename="$(dirname $1)/repl.o"
 fi
 
 while [ 1 ]; do
-    read -e -p "> " line
+    read -r -e -p "> " line
     echo "" > $cfilename
     while IFS= read -r cline; do
         if [ -z "$(echo $cline | grep "// INJECT_REPL")" ]; then
@@ -49,9 +49,10 @@ while [ 1 ]; do
             $ofilename
             echo "######END_OUTPUT######"
         fi
+        rm $cfilename
+        rm $ofilename
     else
         echo "Compiling...[FAIL]"
+        rm $cfilename
     fi
-    rm $cfilename
-    rm $ofilename
 done

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+cfilename="/tmp/caos_repl_code.cpp"
+ofilename="/tmp/caos_repl"
+
 mainc="
 #include <iostream>
 using namespace std;
@@ -13,38 +16,42 @@ if [ ! -z $1 ]; then
 mainc="
 #include <iostream>
 using namespace std;
-$(cat $1)
+$(cat $(dirname $1)/main.c)
 "
+cfilename="$(dirname $1)/repl.tmp.c"
+ofilename="$(dirname $1)/repl.o"
 fi
 
 while [ 1 ]; do
     read -e -p "> " line
-    echo "" > /tmp/caos_repl_code.cpp
+    echo "" > $cfilename
     while IFS= read -r cline; do
         if [ -z "$(echo $cline | grep "// INJECT_REPL")" ]; then
-            echo $cline >> /tmp/caos_repl_code.cpp
+            echo $cline >> $cfilename
         else
             if [ -z "$(echo $line | grep ";")" ]; then
-                echo "cout << ($line) << endl;" >> /tmp/caos_repl_code.cpp
+                echo "cout << ($line) << endl;" >> $cfilename
             else
-                echo $line >> /tmp/caos_repl_code.cpp
+                echo $line >> $cfilename
             fi
         fi
     done <<< "$mainc"
     echo "Compiling... "
-    g++ /tmp/caos_repl_code.cpp -o /tmp/caos_repl
+    g++ $cfilename -o $ofilename
     if [ $? -eq 0 ]; then
         echo "Compiling...[DONE]"
-        chmod +x /tmp/caos_repl
+        chmod +x $ofilename
         if [ -z "$(echo $line | grep ";")" ]; then
             printf "< "
-            /tmp/caos_repl
+            $ofilename
         else
             echo "#####BEGIN_OUTPUT#####"
-            /tmp/caos_repl
+            $ofilename
             echo "######END_OUTPUT######"
         fi
     else
         echo "Compiling...[FAIL]"
     fi
+    rm $cfilename
+    rm $ofilename
 done

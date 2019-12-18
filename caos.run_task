@@ -1,0 +1,5 @@
+#!/bin/bash
+TARGET=./$(cat ./Makefile | grep "^TARGET = " | cut -d" " -f3)
+rm $TARGET 2> /dev/null || true
+make
+$TARGET

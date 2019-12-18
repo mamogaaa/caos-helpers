@@ -1,0 +1,17 @@
+#!/bin/bash
+while [ 1 ]; do
+    read -e -p "> " line
+    echo "
+#include <iostream>
+using namespace std;
+int main() {
+    cout << \"< \" << ($line) << endl;
+    return 0;
+}
+    " > /tmp/caos_repl_code.cpp
+    printf "Compiling... "
+    g++ /tmp/caos_repl_code.cpp -o /tmp/caos_repl
+    echo "[DONE]"
+    chmod +x /tmp/caos_repl
+    /tmp/caos_repl
+done

@@ -24,6 +24,7 @@ fi
 
 while [ 1 ]; do
     read -r -e -p "> " line
+    history -s "$line"
     echo "" > $cfilename
     while IFS= read -r cline; do
         if [ -z "$(echo $cline | grep "// INJECT_REPL")" ]; then

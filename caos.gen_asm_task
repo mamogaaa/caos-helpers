@@ -11,14 +11,13 @@ mkdir tests
 
 # write Makefile
 echo "\
-FLAGS = -Wall -Werror -std=gnu11 -O2 -g
 TARGET = $name
 SOURCE = main.S
 
 all: \$(TARGET)
 
 \$(TARGET): main.S
-	gcc -c \$(FLAGS) \$(SOURCE) -o \$(TARGET)
+	gcc -m32 \$(SOURCE) -o \$(TARGET)
 
 testing: \$(TARGET)
 	./tests/run.sh \$(TARGET)\

@@ -21,7 +21,7 @@ SOURCE = main.S
 all: \$(TARGET)
 
 \$(TARGET): main.S
-	gcc -m32 \$(SOURCE) -o \$(TARGET)
+	gcc -m32 \$(LIBS) \$(SOURCE) -o \$(TARGET)
 
 testing: \$(TARGET)
 	./tests/run.sh \$(TARGET)\

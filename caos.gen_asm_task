@@ -8,9 +8,13 @@ fi
 mkdir $folder_name
 cd $folder_name
 mkdir tests
+mkdir lib
+
+ASM_LIBS_PATH=${ASM_LIBS_PATH:=lib}
 
 # write Makefile
 echo "\
+LIBS = $(ls -d $ASM_LIBS_PATH/*)
 TARGET = $name
 SOURCE = main.S
 

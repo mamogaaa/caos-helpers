@@ -17,11 +17,12 @@ echo "\
 LIBS = $(ls -d $ASM_LIBS_PATH/*)
 TARGET = $name
 SOURCE = main.S
+SOURCE2 = main.c
 
 all: \$(TARGET)
 
 \$(TARGET): main.S
-	gcc -m32 \$(LIBS) \$(SOURCE) -o \$(TARGET)
+	gcc -m32 \$(LIBS) \$(SOURCE) \$(SOURCE2) -o \$(TARGET)
 
 testing: \$(TARGET)
 	./tests/run.sh \$(TARGET)\
@@ -49,3 +50,13 @@ chmod 755 tests/run.sh
 echo "\
 
 " > main.S
+
+# write main.c
+echo "\
+#include <stdio.h>
+
+int main(void) {
+	printf(\"Hello, world!\\n\");
+	return 0;
+}
+" > main.c
